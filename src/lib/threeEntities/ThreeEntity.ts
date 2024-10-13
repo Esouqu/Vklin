@@ -1,5 +1,4 @@
 import { ENTITY_STATE } from "$lib/constants";
-import anime from "animejs";
 import { AnimationClip, AnimationMixer, BufferGeometry, Color, MeshStandardMaterial, Mesh, Object3D, SkinnedMesh, type Object3DEventMap, AnimationAction } from "three";
 
 type ThreeMeshType = Mesh<BufferGeometry, MeshStandardMaterial> | SkinnedMesh<BufferGeometry, MeshStandardMaterial>;
@@ -39,38 +38,18 @@ class ThreeEntity {
   }
 
   public setDirection(x: number, y: number) {
-    return new Promise<void>((resolve) => {
-      const targetAngle = Math.atan2(x, y);
-      const currentAngle = this._object3d.rotation.y;
+    const targetAngle = Math.atan2(x, y);
+    const currentAngle = this._object3d.rotation.y;
 
-      // Вычисляем разницу углов
-      let angleDiff = targetAngle - currentAngle;
+    // Вычисляем разницу углов
+    let angleDiff = targetAngle - currentAngle;
 
-      // Нормализуем разницу в диапазоне [-π, π]
-      if (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
-      if (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
+    // Нормализуем разницу в диапазоне [-π, π]
+    if (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
+    if (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
 
-      // Проверяем, нужно ли вращение
-      if (Math.abs(angleDiff) < 0.01) {
-        resolve();
-        return;
-      }
-
-      // Вычисляем новый угол
-      const newAngle = currentAngle + angleDiff;
-
-      anime({
-        targets: this._object3d.rotation,
-        y: newAngle,
-        duration: 200,
-        easing: 'linear',
-        complete: () => {
-          // Нормализуем конечный угол после анимации
-          this._object3d.rotation.y = (newAngle + Math.PI * 2) % (Math.PI * 2);
-          resolve();
-        },
-      });
-    });
+    // Set the new rotation directly
+    this._object3d.rotation.y = targetAngle;
   }
 
   public playAnimation(name: string) {
