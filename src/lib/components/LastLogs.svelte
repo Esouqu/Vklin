@@ -3,6 +3,7 @@
 	import Log from '$lib/components/Log.svelte';
 	import type { LogsCollection } from '$lib/interfaces';
 	import Accordion from '$lib/components/Accordion.svelte';
+	import storable from '$lib/storable';
 
 	interface Props {
 		logs: LogsCollection;
@@ -11,6 +12,7 @@
 	const { logs }: Props = $props();
 
 	let lastLogs = $derived.by(getLastLogs);
+	let isOpen = storable(true, 'isLogsOpen');
 
 	function getLastLogs() {
 		const logsValues = Object.values(logs).flatMap(Object.values);
@@ -20,11 +22,20 @@
 </script>
 
 <div class="last-logs" transition:fly={{ x: 100, duration: 300 }}>
-	<Accordion title="Последние события">
-		<!-- <div class="logs-list" transition:slide={{ axis: 'y', duration: 300 }}> -->
+	<Accordion title="Последние события" maxHeight="calc(100vh - 9rem)" bind:isOpen={$isOpen}>
 		{#each lastLogs as log}
 			<Log {...log} isUsernameShown={true} />
 		{/each}
-		<!-- </div> -->
 	</Accordion>
 </div>
+
+<style lang="scss">
+	.last-logs {
+		position: absolute;
+		z-index: 999;
+		top: 2.5rem;
+		right: 2.5rem;
+		height: calc(100% - 5rem);
+		width: 23rem;
+	}
+</style>

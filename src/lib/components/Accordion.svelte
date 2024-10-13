@@ -6,28 +6,40 @@
 
 	interface Props {
 		title: string;
+		isOpen?: boolean;
+		isInverse?: boolean;
+		maxHeight?: string;
 		children: Snippet;
 	}
 
-	const { title, children }: Props = $props();
-
-	let isOpen = $state(false);
+	let {
+		title,
+		isOpen = $bindable(false),
+		maxHeight = '20rem',
+		isInverse = false,
+		children
+	}: Props = $props();
 
 	function onclick() {
 		isOpen = !isOpen;
 	}
 </script>
 
-<div class="accordion" class:opened={isOpen}>
+<div class="accordion" style="--accordion-max-height: {maxHeight}" class:opened={isOpen}>
+	{#if isOpen && isInverse}
+		<div class="accordion-content" transition:slide>
+			{@render children()}
+		</div>
+	{/if}
 	<button type="button" class="accordion-trigger" {onclick}>
 		{title}
-		{#if isOpen}
+		{#if (!isInverse && isOpen) || (isInverse && !isOpen)}
 			<ArrowUpIcon font-size="1.25rem" />
-		{:else}
+		{:else if (!isInverse && !isOpen) || (isInverse && isOpen)}
 			<ArrowDownIcon font-size="1.25rem" />
 		{/if}
 	</button>
-	{#if isOpen}
+	{#if isOpen && !isInverse}
 		<div class="accordion-content" transition:slide>
 			{@render children()}
 		</div>
@@ -79,7 +91,7 @@
 			flex-direction: column;
 			gap: 0.25rem;
 			padding: 0.5rem;
-			max-height: 20rem;
+			max-height: var(--accordion-max-height);
 			overflow: hidden auto;
 		}
 	}

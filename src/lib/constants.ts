@@ -1,3 +1,8 @@
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+
+export const gltfLoader = new GLTFLoader();
+export const LOCATION_OFFSET = 3;
+
 export enum PLAYER_ACTION_STATE {
   IDLE = 'idle',
   MOVING = 'moving',
@@ -18,6 +23,16 @@ export enum PLAYER_ANIMATION_STATE {
   IDLE = 'idle',
   RUN = 'run',
   DICE_HIT = 'dice_hit',
+}
+
+export enum ENTITY_STATE {
+  NONE,
+  HOVERED,
+  SELECTED,
+  DISABLED,
+  HIDDEN,
+  SHOWED,
+  ENABLED,
 }
 
 export const playerColors = [

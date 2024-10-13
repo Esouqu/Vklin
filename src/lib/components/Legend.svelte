@@ -44,7 +44,7 @@
 </script>
 
 <div class="legend">
-	<Accordion title="Описание Клеток">
+	<Accordion title="Описание Клеток" isInverse={true}>
 		{#each locationTypes as { color, description }}
 			<div class="legend-item">
 				<div class="legend-icon">
@@ -58,6 +58,11 @@
 
 <style lang="scss">
 	.legend {
+		position: absolute;
+		left: 2.5rem;
+		bottom: 2.5rem;
+		width: 19rem;
+
 		&-item {
 			display: flex;
 			align-items: center;

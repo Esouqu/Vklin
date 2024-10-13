@@ -1,4 +1,7 @@
+import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 import type { LocationType, Vector2D } from "./interfaces";
+import * as THREE from 'three';
+import { gltfLoader } from "./constants";
 
 export function remToPixel(rem: number) {
   return rem * parseFloat(getComputedStyle(document.body).fontSize);
@@ -65,4 +68,32 @@ export function getNoun(num: number, words: string[]) {
   } else {
     return words[2];
   }
+}
+
+export function subtractVectors(a: Vector2D, b: Vector2D) {
+  return {
+    x: a.x - b.x,
+    y: a.y - b.y
+  }
+}
+
+export function getGroupCenter(group: THREE.Group) {
+  const center = new THREE.Vector3();
+  const children = group.children;
+  const count = children.length;
+
+  for (let i = 0; i < count; i++) {
+    center.add(children[i].position);
+  }
+  center.divideScalar(count);
+
+  return center;
+}
+
+export async function loadGLB(glb: string) {
+  return new Promise<GLTF>((resolve) => {
+    gltfLoader.load(glb, async (gltf) => {
+      resolve(gltf);
+    });
+  });
 }
