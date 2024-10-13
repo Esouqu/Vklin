@@ -1,0 +1,207 @@
+:root {
+  --primary: rgb(154, 212, 162);
+  --surface-tint: rgb(154 212 162);
+  --on-primary: rgb(0 57 23);
+  --primary-container: rgb(25 81 42);
+  --on-primary-container: rgb(181 241 188);
+  --secondary: rgb(183 204 183);
+  --on-secondary: rgb(35 52 37);
+  --secondary-container: rgb(57 75 59);
+  --on-secondary-container: rgb(211 232 210);
+  --tertiary: rgb(161 206 216);
+  --on-tertiary: rgb(0 54 62);
+  --tertiary-container: rgb(32 77 85);
+  --on-tertiary-container: rgb(189 234 244);
+  --error: rgb(255 180 171);
+  --on-error: rgb(105 0 5);
+  --error-container: rgb(147 0 10);
+  --on-error-container: rgb(255 218 214);
+  --background: rgb(16 21 16);
+  --on-background: rgb(223 228 220);
+  --surface: rgb(16 21 16);
+  --on-surface: rgb(223 228 220);
+  --surface-variant: rgb(65 73 65);
+  --on-surface-variant: rgb(193 201 190);
+  --outline: rgb(139 147 137);
+  --outline-variant: rgb(65 73 65);
+  --shadow: rgb(0 0 0);
+  --scrim: rgb(0 0 0);
+  --inverse-surface: rgb(223 228 220);
+  --inverse-on-surface: rgb(45 50 44);
+  --inverse-primary: rgb(51 105 64);
+  --primary-fixed: rgb(181 241 188);
+  --on-primary-fixed: rgb(0 33 11);
+  --primary-fixed-dim: rgb(154 212 162);
+  --on-primary-fixed-variant: rgb(25 81 42);
+  --secondary-fixed: rgb(211 232 210);
+  --on-secondary-fixed: rgb(14 31 18);
+  --secondary-fixed-dim: rgb(183 204 183);
+  --on-secondary-fixed-variant: rgb(57 75 59);
+  --tertiary-fixed: rgb(189 234 244);
+  --on-tertiary-fixed: rgb(0 31 37);
+  --tertiary-fixed-dim: rgb(161 206 216);
+  --on-tertiary-fixed-variant: rgb(32 77 85);
+  --surface-dim: rgb(16 21 16);
+  --surface-bright: rgb(54 58 53);
+  --surface-container-lowest: rgb(11 15 11);
+  --surface-container-low: rgb(24 29 24);
+  --surface-container: rgb(28 33 28);
+  --surface-container-high: rgb(38 43 38);
+  --surface-container-highest: rgb(49 54 49);
+  --hover-white: rgba(255, 255, 255, 15%);
+  --hover-black: rgba(0, 0, 0, 15%);
+  --elevation-1: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --elevation-3: 0px 1px 3px 0px rgba(0, 0, 0, 0.30), 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
+  --elevation-5: 0px 4px 4px 0px rgba(0, 0, 0, 0.30), 0px 8px 12px 6px rgba(0, 0, 0, 0.15);
+}
+
+body {
+  display: flex;
+  height: 100vh;
+  font-family: 'Inter';
+  background-color: var(--surface-container);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  transition: background-color .3s;
+  user-select: none;
+  overflow: hidden;
+
+  &.grabbing {
+    user-select: none;
+    cursor: grabbing;
+    pointer-events: none;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: radial-gradient(circle at 0.125rem 0.125rem, rgb(255 255 255 / .15) 0.0875rem, transparent 0);
+    background-size: 2rem 2rem;
+    background-repeat: repeat;
+    background-position: .5rem center;
+  }
+}
+
+hr {
+  border-color: var(--outline);
+  border-radius: 0.5rem;
+  height: unset;
+}
+
+a {
+  color: var(--primary);
+}
+
+*::selection {
+  background-color: var(--primary);
+}
+
+::-webkit-scrollbar {
+  width: 0.3rem;
+  height: 0.3rem;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: gray;
+  transition: .2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #f1f1f1;
+}
+
+.tippy-box[data-theme~='general'] {
+  white-space: break-spaces;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--on-inverse-surface);
+  background-color: var(--inverse-surface);
+}
+
+.transition-container {
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+
+  &>* {
+    grid-row: 1;
+    grid-column: 1;
+  }
+}
+
+@supports (-moz-appearance:none) {
+  * {
+    scrollbar-width: thin;
+  }
+}
+
+/* Adjusting for different screen widths */
+@media (max-width: 1920px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 1600px) {
+  html {
+    font-size: 13.5px;
+    /* 1440px */
+  }
+}
+
+@media (max-width: 1440px) {
+  html {
+    font-size: 12px;
+    /* 1440px */
+  }
+}
+
+@media (max-width: 1366px) {
+  html {
+    font-size: 11.5px;
+    /* 1366px */
+  }
+}
+
+@media (max-width: 1280px) {
+  html {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 1024px) {
+  html {
+    font-size: 8.5px;
+    /* 1024px */
+  }
+}
+
+/* Scaling for Larger Screens */
+@media (min-width: 2560px) {
+  html {
+    font-size: 22px;
+    /* 2560px */
+  }
+}
+
+@media (min-width: 3840px) {
+  html {
+    font-size: 32px;
+    /* 3840px */
+  }
+}
