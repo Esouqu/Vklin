@@ -75,17 +75,20 @@
 	) {
 		const { x, y } = calculateLocationCoordinates(location, offsetX, offsetY);
 		const playerImage = new Image();
-		playerImage.src = player.avatar || imagePlaceholder;
 
-		ctx.save();
-		ctx.beginPath();
-		ctx.arc(x, y, avatarSize / 2, 0, 2 * Math.PI);
-		ctx.clip();
-		ctx.drawImage(playerImage, x - avatarSize / 2, y - avatarSize / 2, avatarSize, avatarSize);
-		ctx.strokeStyle = 'white'; // Set the border color
-		ctx.lineWidth = avatarBorder; // Set the border width
-		ctx.stroke();
-		ctx.restore();
+		playerImage.onload = () => {
+			ctx.save();
+			ctx.beginPath();
+			ctx.arc(x, y, avatarSize / 2, 0, 2 * Math.PI);
+			ctx.clip();
+			ctx.drawImage(playerImage, x - avatarSize / 2, y - avatarSize / 2, avatarSize, avatarSize);
+			ctx.strokeStyle = 'white';
+			ctx.lineWidth = avatarBorder;
+			ctx.stroke();
+			ctx.restore();
+		};
+
+		playerImage.src = player.avatar || imagePlaceholder;
 	}
 
 	function calculateCanvasOffset() {
@@ -233,6 +236,7 @@
 
 		for (const location of Object.values(locations)) {
 			let playersOnLocation = [];
+
 			renderLocation(ctx, location, offsetX, offsetY);
 
 			for (const player of Object.values(players)) {
