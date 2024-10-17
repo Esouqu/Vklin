@@ -106,12 +106,9 @@
 			playersGroup={mapController.playersObjects}
 			treasure={mapController.treasureObject}
 		/>
-		<!-- <SpectatorCanvas {locations} {players} /> -->
 		<PlayersBanners {players} {logs} />
 		<LastLogs {logs} />
-		<!-- <div class="spectator-info"> -->
 		<Legend {locations} />
-		<!-- </div> -->
 	{/if}
 </div>
 
@@ -127,16 +124,5 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-	}
-
-	.spectator-info {
-		position: absolute;
-		z-index: 997;
-		top: 2.5rem;
-		right: 2.5rem;
-		width: 20rem;
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
 	}
 </style>
