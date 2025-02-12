@@ -1,5 +1,4 @@
-import type { IItem } from "./data/itemsData";
-import ITEMS from "./data/itemsData";
+import type { IItem } from "$lib/data/itemsData";
 
 class ItemManager {
   private items: Map<string, IItem> = new Map();
@@ -16,7 +15,5 @@ class ItemManager {
 }
 
 const itemManager = new ItemManager();
-
-itemManager.addItems(ITEMS);
 
 export default itemManager;

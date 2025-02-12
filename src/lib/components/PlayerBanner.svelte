@@ -2,27 +2,30 @@
 	import { fly } from 'svelte/transition';
 	import KeyIcon from '~icons/mdi/key';
 	import TrophyIcon from '~icons/mdi/trophy';
-	import type { FirebasePlayer } from '$lib/interfaces';
-	import { PLAYER_ACTION_STATE, PLAYER_ACTIVATION_STATE } from '$lib/constants';
+	import { PLAYER_ACTIVATION_STATE, PLAYER_ACTION_STATE } from '$lib/constants';
+	import type GamePlayer from '$lib/gameEntities/GamePlayer.svelte';
 	import placeholderImage from '$lib/assets/images/placeholder.png';
+	import EffectIcon from './EffectIcon.svelte';
 
-	interface Props extends Partial<FirebasePlayer> {
-		isSelected: boolean | null;
-		onclick?: ((e: MouseEvent) => void) | null;
+	interface Props extends Partial<GamePlayer> {
+		placement: number;
+		playersAmount: number;
 	}
 
 	const {
 		name,
+		avatar,
 		keys,
 		trophies,
 		color,
 		actionState,
 		activationState,
 		isOnline,
-		gameTitle,
-		avatar,
-		isSelected,
-		onclick
+		game,
+		effects,
+		placement,
+		isStunned,
+		playersAmount
 	}: Props = $props();
 
 	let actionStateText = $derived.by(getBaseStateText);
@@ -35,7 +38,7 @@
 			case PLAYER_ACTIVATION_STATE.AUCTION:
 				return 'Проводит Аукцион';
 			case PLAYER_ACTIVATION_STATE.PLAYING:
-				return `Играет в ${gameTitle}`;
+				return `Играет в ${game?.name}`;
 			case PLAYER_ACTIVATION_STATE.TAKING_REWARD:
 				return 'Получает Награду';
 		}
@@ -56,81 +59,97 @@
 </script>
 
 <div
-	class="player-banner"
-	class:selected={isSelected}
-	class:active={isSelected === null}
-	class:online={isOnline}
+	class="player-banner border-2 border-muted"
+	data-placement={placement}
+	data-last={placement === playersAmount}
 	style="--banner-color: {color};"
-	aria-hidden="true"
-	{onclick}
 >
-	<div class="player-banner-avatar">
+	<div
+		class="player-banner-placement"
+		data-placement={placement}
+		data-last={placement === playersAmount}
+	>
+		{#if placement === playersAmount}
+			<div class="text-background text-sm font-medium">Курьер Яндекс Еды</div>
+		{:else}
+			<div class="text-sm text-background font-medium">{placement}</div>
+		{/if}
+	</div>
+	<div class="player-banner-avatar" class:online={isOnline}>
 		<img src={avatar || placeholderImage} alt="Player avatar" />
 	</div>
-	<div class="player-banner-info">
-		<div class="player-banner-name-wrapper">
-			<p class="player-banner-name">{name}</p>
-			<div style="display: grid; align-items: center;">
-				{#key actionStateText || activationStateText}
-					<p class="player-banner-state" transition:fly={{ x: -20 }}>
-						{activationState !== PLAYER_ACTIVATION_STATE.NONE
-							? activationStateText
-							: actionStateText}
-					</p>
-				{/key}
-			</div>
-		</div>
-		<div class="player-banner-scores">
-			<div class="player-banner-keys">
-				<TrophyIcon width="1.25rem" height="1.25rem" />
-				{#key trophies}
-					<p style="margin: 0; font-variant-numeric: tabular-nums;" transition:fly={{ y: 30 }}>
-						{trophies}
-					</p>
-				{/key}
-			</div>
-			<div class="player-banner-keys">
-				<KeyIcon width="1.25rem" height="1.25rem" />
-				{#key keys}
-					<p style="margin: 0; font-variant-numeric: tabular-nums;" transition:fly={{ y: 30 }}>
-						{keys}
-					</p>
-				{/key}
-			</div>
+	<div class="pl-2">
+		<p class="text-sm font-bold">{name}</p>
+		<div class="grid items-center">
+			{#key actionStateText || activationStateText}
+				<p class="player-banner-state text-xs" transition:fly={{ x: -20 }}>
+					{activationState !== PLAYER_ACTIVATION_STATE.NONE ? activationStateText : actionStateText}
+				</p>
+			{/key}
 		</div>
 	</div>
+	<div class="player-banner-scores">
+		<div class="player-banner-keys">
+			<TrophyIcon width="1rem" height="1rem" />
+			{#key trophies}
+				<p class="tabular-nums text-sm" transition:fly={{ y: 30 }}>
+					{trophies}
+				</p>
+			{/key}
+		</div>
+		<div class="player-banner-keys">
+			<KeyIcon width="1rem" height="1rem" />
+			{#key keys}
+				<p class="tabular-nums text-sm" transition:fly={{ y: 30 }}>
+					{keys}
+				</p>
+			{/key}
+		</div>
+	</div>
+
+	{#if effects || isStunned}
+		<div class="player-effects">
+			{#each Object.entries(effects || {}) as [effectId, d]}
+				{@const duration = d?.duration || 0}
+				<EffectIcon {effectId} {duration} />
+			{/each}
+			{#if isStunned}
+				<EffectIcon effectId="knockout" duration={1} />
+			{/if}
+		</div>
+	{/if}
 </div>
 
-<style lang="scss">
+<style>
 	.player-banner {
 		position: relative;
-		display: flex;
+		display: grid;
+		grid-template-columns: 1.5rem 2.75rem 1fr auto;
 		align-items: center;
-		gap: 1rem;
-		padding: 0.75rem;
-		border-left: 0.2rem solid red;
 		border-radius: 0.5rem;
+		width: 19rem;
+		text-align: start;
 		background-color: var(--surface-container-highest);
 		box-shadow: var(--elevation-3);
 		opacity: 1;
-		transition: opacity 0.3s;
-		overflow: hidden;
+		/* transition: border-color 0.2s; */
+		user-select: none;
 		cursor: pointer;
 
-		&:not(.active):not(.selected) {
-			opacity: 0.5;
-		}
+		&[data-last='true'] {
+			margin-top: 1.25rem;
+			grid-template-columns: 2.75rem 1fr auto;
+			border: 0.25rem solid #fdd835;
+			border-radius: 0 0 0.5rem 0.5rem;
 
-		&.selected {
-			opacity: 1;
-
-			&::before {
-				translate: 0 0;
+			& .player-banner-avatar {
+				border-radius: 0 0 0 0.5rem;
+				overflow: hidden;
 			}
 		}
 
-		&.online {
-			border-color: springgreen;
+		&::before {
+			border-radius: 0 0 0.5rem 0.5rem;
 		}
 
 		&::before {
@@ -138,58 +157,80 @@
 			position: absolute;
 			top: 0;
 			left: 0;
-			translate: -25% 0;
 			z-index: 0;
 			border-radius: 0.5rem;
 			width: 100%;
 			height: 100%;
-			background-image: linear-gradient(to right, var(--banner-color), transparent 100%);
+			opacity: 0.5;
+			background-image: linear-gradient(to right, var(--banner-color), transparent);
 			transition: 0.3s;
 		}
 
 		&:hover {
-			opacity: 1;
+			border-color: white;
+		}
 
-			&::before {
-				translate: 0 0;
+		.player-banner-placement {
+			z-index: 1;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 0.35rem 0 0 0.35rem;
+			height: 100%;
+			color: var(--on-inverse-surface);
+			background-color: #a6a6a6;
+
+			&[data-placement='1'] {
+				background-color: #fdd835;
+			}
+			&[data-placement='2'] {
+				background-color: #e0e0e0;
+			}
+			&[data-placement='3'] {
+				background-color: #cd7f32;
+			}
+			&[data-last='true'] {
+				position: absolute;
+				display: flex;
+				bottom: calc(100% + 0.25rem);
+				left: -0.25rem;
+				width: calc(100% + 0.25rem * 2);
+				height: auto;
+				border-radius: 0.5rem 0.5rem 0 0;
+				background-color: #fdd835;
 			}
 		}
 
-		&-state {
+		.player-banner-state {
 			grid-area: 1 / 1;
 			margin: 0;
-			font-size: 0.75rem;
 			white-space: nowrap;
 			text-overflow: ellipsis;
 			overflow: hidden;
 		}
-		&-name {
-			margin: 0;
-			font-weight: 600;
-			line-height: 1.25rem;
 
-			&-wrapper {
-				display: grid;
-				grid-template-rows: 1.25rem 1.25rem;
-			}
-		}
-
-		&-info {
-			z-index: 1;
-			display: flex;
-			flex: 1;
-			align-items: center;
-			justify-content: space-between;
-			color: white;
-		}
-
-		&-avatar {
+		.player-banner-avatar {
 			position: relative;
 			z-index: 1;
 			display: flex;
-			height: 2.75rem;
-			border-radius: 50%;
-			overflow: hidden;
+
+			&.online {
+				&::after {
+					background-color: springgreen;
+				}
+			}
+			&::after {
+				content: '';
+				position: absolute;
+				bottom: 0.25rem;
+				right: 0.25rem;
+				z-index: 1;
+				outline: 0.125rem solid black;
+				border-radius: 50%;
+				width: 0.5rem;
+				height: 0.5rem;
+				background-color: crimson;
+			}
 
 			& img {
 				width: 100%;
@@ -199,12 +240,12 @@
 			}
 		}
 
-		&-scores {
+		.player-banner-scores {
 			display: flex;
 			flex-direction: column;
 		}
 
-		&-keys {
+		.player-banner-keys {
 			display: grid;
 			align-items: center;
 			gap: 6px;
@@ -214,5 +255,21 @@
 				min-width: 2.25rem;
 			}
 		}
+	}
+
+	.player-effects {
+		position: absolute;
+		top: 50%;
+		left: calc(100% - 1rem);
+		translate: 0 -50%;
+		z-index: -1;
+		display: grid;
+		grid-auto-flow: column;
+		grid-auto-columns: 2rem;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0 1rem 0 1.5rem;
+		border-radius: 0.5rem;
+		height: 100%;
 	}
 </style>

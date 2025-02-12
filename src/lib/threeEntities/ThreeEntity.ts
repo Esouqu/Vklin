@@ -1,4 +1,5 @@
 import { ENTITY_STATE } from "$lib/constants";
+import anime from "animejs";
 import { AnimationClip, AnimationMixer, BufferGeometry, Color, MeshStandardMaterial, Mesh, Object3D, SkinnedMesh, type Object3DEventMap, AnimationAction } from "three";
 
 type ThreeMeshType = Mesh<BufferGeometry, MeshStandardMaterial> | SkinnedMesh<BufferGeometry, MeshStandardMaterial>;
@@ -32,24 +33,45 @@ class ThreeEntity {
     this._object3d = props.object3d;
 
     this._mesh = this._getMesh(this._object3d, props.id);
+
     this._mixer = new AnimationMixer(this._object3d);
     this._actions = this._getActions(props.animations || []);
     this._activeAction = this._actions['idle'];
   }
 
   public setDirection(x: number, y: number) {
-    const targetAngle = Math.atan2(x, y);
-    const currentAngle = this._object3d.rotation.y;
+    return new Promise<void>((resolve) => {
+      const targetAngle = Math.atan2(x, y);
+      const currentAngle = this._object3d.rotation.y;
 
-    // Вычисляем разницу углов
-    let angleDiff = targetAngle - currentAngle;
+      // Вычисляем разницу углов
+      let angleDiff = targetAngle - currentAngle;
 
-    // Нормализуем разницу в диапазоне [-π, π]
-    if (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
-    if (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
+      // Нормализуем разницу в диапазоне [-π, π]
+      if (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
+      if (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
 
-    // Set the new rotation directly
-    this._object3d.rotation.y = targetAngle;
+      // Проверяем, нужно ли вращение
+      if (Math.abs(angleDiff) < 0.01) {
+        resolve();
+        return;
+      }
+
+      // Вычисляем новый угол
+      const newAngle = currentAngle + angleDiff;
+
+      anime({
+        targets: this._object3d.rotation,
+        y: newAngle,
+        duration: 200,
+        easing: 'linear',
+        complete: () => {
+          // Нормализуем конечный угол после анимации
+          this._object3d.rotation.y = (newAngle + Math.PI * 2) % (Math.PI * 2);
+          resolve();
+        },
+      });
+    });
   }
 
   public playAnimation(name: string) {
@@ -70,6 +92,20 @@ class ThreeEntity {
 
   public updateColor(color?: string) {
     this._mesh.material.color = new Color(color || this._defaultColor);
+  }
+
+  public async move(x: number, y: number, z: number) {
+    return new Promise<void>((resolve) => {
+      anime({
+        targets: this._object3d.position,
+        x,
+        y: z,
+        z: y,
+        duration: 1000,
+        easing: 'linear',
+        complete: () => resolve(),
+      });
+    })
   }
 
   public setPosition(x: number, y: number, z: number) {

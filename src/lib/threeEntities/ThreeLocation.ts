@@ -1,79 +1,76 @@
-import { LOCATION_OFFSET } from "$lib/constants";
-import type { FirebaseLocation, Vector2D } from "$lib/interfaces";
-import { getLocationColor } from "$lib/utils";
-import type { GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
-import ThreeArrow from "./ThreeArrow";
+import type { FirebaseLocation } from "$lib/interfaces";
+import { POINTS_OBJECT } from "$lib/utils";
+import anime from "animejs";
 import ThreeEntity from "./ThreeEntity";
-import { CylinderGeometry, Color, Mesh, MeshPhongMaterial, RingGeometry, Group, SphereGeometry } from "three";
-
-function createLocationCore(materialColor: string) {
-  const geometry = new CylinderGeometry(0.5, 0.5, 0.1, 8);
-  const color = new Color(materialColor);
-  const material = new MeshPhongMaterial({ color });
-  const mesh = new Mesh(geometry, material);
-
-  mesh.material.transparent = true;
-  mesh.name = 'Location Core';
-
-  return mesh;
-}
-
-function createLocationOutline(materialColor: string) {
-  const outlineGeometry = new RingGeometry(0.5, 0.6, 8);
-  const outlineColor = new Color(materialColor);
-  const outlineMaterial = new MeshPhongMaterial({ color: outlineColor });
-  const outlineMesh = new Mesh(outlineGeometry, outlineMaterial);
-
-  outlineMesh.material.transparent = true;
-  outlineMesh.rotation.x = -(Math.PI / 2);
-  outlineMesh.name = 'Location Outline';
-
-  return outlineMesh;
-}
+import { Group, Mesh, MeshStandardMaterial, SphereGeometry } from "three";
+import ThreeArrow from "./ThreeArrow";
 
 function createTrapIndicator() {
   const geometry = new SphereGeometry(0.2, 32, 32);
-  const material = new MeshPhongMaterial({ color: 'white' });
+  const material = new MeshStandardMaterial({ color: 'white' });
   const mesh = new Mesh(geometry, material);
 
   mesh.visible = false;
-  mesh.material.transparent = true;
   mesh.name = 'Trap Indicator';
 
   return mesh;
 }
 
-function createLocationMesh(coreColor: string, outlineColor: string) {
-  const coreMesh = createLocationCore(coreColor);
-  const outlineMesh = createLocationOutline(outlineColor);
-  const trapIndicator = createTrapIndicator();
+function createLocation(location: FirebaseLocation, color?: string) {
+  const group = new Group();
 
-  coreMesh.add(trapIndicator);
-  coreMesh.add(outlineMesh);
+  POINTS_OBJECT.children[0].children.forEach((child) => {
+    const material = (child.children[0] as Mesh).material as MeshStandardMaterial;
 
-  return new Group().add(coreMesh);
+    if (material.name === location.type) {
+      const mesh = (child.children[0] as Mesh).clone();
+      mesh.rotation.set(-Math.PI / 2, 0, 0);
+      mesh.material = material.clone();
+      if (color) {
+        (mesh.material as MeshStandardMaterial).color.set(color);
+      }
+
+      group.add(mesh);
+      group.add(createTrapIndicator());
+    }
+  });
+
+  return group;
 }
 
 class ThreeLocation extends ThreeEntity {
-  private _gltfArrow: GLTF;
+  private _data: FirebaseLocation;
   private _arrows: ThreeArrow[] = [];
 
-  constructor(location: FirebaseLocation, gltfArrow: GLTF, ownerColor?: string) {
-    super({ id: location.id, object3d: createLocationMesh(ownerColor || '#777777', getLocationColor(location.type)) });
-
-    this._gltfArrow = gltfArrow;
+  constructor(location: FirebaseLocation, ownerColor?: string) {
+    super({ id: location.id, object3d: createLocation(location, ownerColor) });
 
     const { x, y } = location.position;
-    this.setPosition(x * LOCATION_OFFSET, 0, y * LOCATION_OFFSET);
+    this._data = location;
 
-    if (location.trap) {
-      this.showTrapIndicator();
-    }
-
-    this._setupArrows(location.possibleMoves);
+    this.setPosition(x, 0.01, y);
+    this._setupInteractions();
   }
 
-  private showTrapIndicator() {
+  public changeCoreColor(color?: string) {
+    if (!color) return;
+
+    this._object3d.traverse((child) => {
+      if (child instanceof Mesh && child.name === "hexagon") {
+        (child.material as MeshStandardMaterial).color.set(color);
+      }
+    });
+  }
+
+  public hideTrapIndicator() {
+    const trapIndicator = this.object3d.getObjectByName('Trap Indicator');
+
+    if (trapIndicator instanceof Mesh) {
+      trapIndicator.visible = false;
+    }
+  }
+
+  public showTrapIndicator() {
     const trapIndicator = this.object3d.getObjectByName('Trap Indicator');
 
     if (trapIndicator instanceof Mesh) {
@@ -81,16 +78,59 @@ class ThreeLocation extends ThreeEntity {
     }
   }
 
-  private _setupArrows(possibleMoves: Vector2D[]) {
-    for (const direction of possibleMoves) {
-      const arrow = new ThreeArrow(direction, this._gltfArrow);
+  public disableArrows() {
+    for (const arrow of this._arrows) {
+      arrow.disable();
+    }
+  }
 
-      arrow.setPosition(direction.x * (LOCATION_OFFSET / 2), 0, direction.y * (LOCATION_OFFSET / 2));
+  public enableArrows() {
+    for (const arrow of this._arrows) {
+      arrow.enable();
+    }
+  }
+
+  public createArrows() {
+    for (const direction of this._data.possibleMoves) {
+      const arrow = new ThreeArrow(this._data, direction);
 
       this.object3d.add(arrow.object3d);
       this._arrows.push(arrow);
     }
   }
+
+  private _setupInteractions() {
+    this.onSelect = () => {
+      this._object3d.traverse((child) => {
+        if (child instanceof Mesh && child.name === "hexagon") {
+          anime({
+            targets: child.material.emissive,
+            r: 1,
+            g: 1,
+            b: 1,
+            duration: 300,
+            easing: 'easeOutSine',
+          });
+        }
+      });
+    }
+    this.onDeselect = () => {
+      this._object3d.traverse((child) => {
+        if (child instanceof Mesh && child.name === "hexagon") {
+          anime({
+            targets: child.material.emissive,
+            r: 0,
+            g: 0,
+            b: 0,
+            duration: 300,
+            easing: 'easeOutSine',
+          });
+        }
+      });
+    }
+  }
+
+  get arrows() { return this._arrows }
 }
 
 export default ThreeLocation;

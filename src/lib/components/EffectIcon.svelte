@@ -2,6 +2,7 @@
 	import { fade } from 'svelte/transition';
 	import effectManager from '$lib/effectManager';
 	import { getEffectIcon } from '$lib/data/effectIcons';
+	import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 	const { effectId, duration }: { effectId: string; duration: number } = $props();
 	const effect = $derived(effectManager.getEffect(effectId));
@@ -9,51 +10,24 @@
 </script>
 
 {#if effect}
-	<div
-		class="effect"
-		class:negative={effect.isNegative}
-		data-tooltip={effect.description + `\n\nДлительность: ${duration}`}
-		transition:fade|global
-	>
-		<img src={icon} alt={effect.name} />
-	</div>
+	<Tooltip>
+		<TooltipTrigger>
+			<div
+				class="relative flex rounded-full outline outline-[0.125rem] outline-green-500 data-[negative=true]:outline-red-500 bg-muted"
+				data-negative={effect.isNegative}
+				in:fade|global
+			>
+				<img class="w-full h-full object-cover rounded-full" src={icon} alt={effect.name} />
+			</div>
+		</TooltipTrigger>
+		<TooltipContent
+			class="w-[12rem] bg-[var(--surface-container-highest)]"
+			side="right"
+			sideOffset={24}
+		>
+			<div>{effect.description}</div>
+			<br />
+			<div class="text-xs">Длительность: {duration}</div>
+		</TooltipContent>
+	</Tooltip>
 {/if}
-
-<style lang="scss">
-	.effect {
-		position: relative;
-		display: flex;
-		border-radius: 50%;
-		outline: 0.125rem solid limegreen;
-
-		&.negative {
-			outline: 0.125rem solid red;
-		}
-
-		& img {
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-			aspect-ratio: 1 / 1;
-			border-radius: 50%;
-		}
-
-		&:hover {
-			&::after {
-				content: attr(data-tooltip);
-				position: absolute;
-				top: 50%;
-				left: calc(100% + 2rem);
-				translate: 0 -50%;
-				z-index: 999;
-				padding: 1rem;
-				border-radius: 0.5rem;
-				min-width: 12rem;
-				white-space: pre-wrap;
-				box-shadow: var(--elevation-3);
-				background-color: var(--surface-container-highest);
-				color: white;
-			}
-		}
-	}
-</style>

@@ -1,71 +1,106 @@
-import type { FirebasePlayer, Vector2D } from "$lib/interfaces";
+import type { FirebasePlayer } from "$lib/interfaces";
 import ThreeEntity from "./ThreeEntity";
-import { LOCATION_OFFSET, PLAYER_ANIMATION_STATE } from "$lib/constants";
-import { AnimationClip, LoopOnce, MeshStandardMaterial, Object3D, type Object3DEventMap } from "three";
-import ThreeLabel from "./ThreeLabel";
+import { AnimationClip, LoopOnce, MeshStandardMaterial, Object3D, SpotLight, TextureLoader, type Object3DEventMap } from "three";
+import anime from "animejs";
+import yugybunyg from '$lib/assets/textures/yugybunyg.png';
+import archiedos from '$lib/assets/textures/archiedos.png';
+import arrowwoods from '$lib/assets/textures/arrowwoods.png';
+import nenormova from '$lib/assets/textures/nenormova.png';
+import bradhi from '$lib/assets/textures/bradhi.png';
+import citinez from '$lib/assets/textures/citinez.png';
+import sgtgrafoyni from '$lib/assets/textures/sgtgrafoyni.png';
+import rasenganss904 from '$lib/assets/textures/rasenganss904.png';
 
 interface Props extends FirebasePlayer {
   object3d: Object3D<Object3DEventMap>;
   animations: AnimationClip[];
-  direction: Vector2D;
 }
-
 class ThreePlayer extends ThreeEntity {
-  private _usernameLabel = new ThreeLabel();
-  private _baseZ = 0.05;
-
-  constructor({ id, position, color, object3d, animations, name, direction }: Props) {
+  private _enabledOpacity = 1;
+  private _hiddenOpacity = 0.1;
+  constructor({ id, color, object3d, animations, name }: Props) {
     super({ id, object3d, animations });
 
-    const { x, y, z } = {
-      x: position.x * LOCATION_OFFSET,
-      y: this._baseZ,
-      z: position.y * LOCATION_OFFSET,
-    }
-
     this._mesh.name = name;
-    this._object3d.position.set(x, y, z);
-    this._object3d.scale.set(0.1, 0.1, 0.1);
+    this._object3d.scale.set(0.075, 0.075, 0.075);
 
-    this._actions['dice_hit'].setDuration(2).setLoop(LoopOnce, 1);
+    this._actions['dice_hit'].setLoop(LoopOnce, 1);
 
     this.playAnimation('idle');
-    this._changeColor(color);
-
-    // setTimeout(() => {
-    this.setDirection(direction.x, direction.y);
-    // }, 300);
-
-    this._setUsernameLabel(name);
-  }
-
-  public handleAnimationState(state: PLAYER_ANIMATION_STATE) {
-    switch (state) {
-      case PLAYER_ANIMATION_STATE.IDLE: {
-        this.playAnimation('idle');
-        break;
-      }
-      case PLAYER_ANIMATION_STATE.DICE_HIT: {
-        this.playAnimation('dice_hit');
-        break;
-      }
-      case PLAYER_ANIMATION_STATE.RUN: {
-        this.playAnimation('run');
-        break;
-      }
-    }
+    this._changeTexture(name);
+    // this._changeColor(color);
+    this._addLight(color);
+    this._setupInteractions();
   }
 
   private _changeColor(color: string) {
     this._mesh.material = new MeshStandardMaterial({ color });
-    this._mesh.material.transparent = true;
   }
 
-  private _setUsernameLabel(name: string) {
-    this._usernameLabel.setText(name);
-    this._usernameLabel.label.element.style.color = 'white';
-    this._usernameLabel.label.element.style.fontWeight = '400';
-    this.object3d.add(this._usernameLabel.label);
+  private _changeTexture(name: string) {
+    const image = this._getImage(name);
+    const texture = new TextureLoader().load(image);
+    texture.flipY = false;
+
+    this._mesh.material = this._mesh.material.clone();
+    this._mesh.material.map = texture;
+  }
+
+  private _getImage(name: string) {
+    switch (name) {
+      case 'Archiedos':
+        return archiedos;
+      case 'Arrowwoods':
+        return arrowwoods;
+      case 'nenormova':
+        return nenormova;
+      case 'citinez':
+        return citinez;
+      case 'Bradhi':
+        return bradhi;
+      case 'SgtGrafoyni':
+        return sgtgrafoyni;
+      case 'yugybunyg':
+        return yugybunyg;
+      case 'rasenganss904':
+        return rasenganss904;
+      default:
+        return archiedos;
+    }
+  }
+
+  private _addLight(color?: string) {
+    const spotlight = new SpotLight(color, 3, 2);
+    spotlight.angle = Math.PI;
+    spotlight.penumbra = 0;
+    spotlight.position.set(0, 5, 0);
+    spotlight.lookAt(this._mesh.position);
+    this._object3d.add(spotlight);
+  }
+
+  private _setupInteractions() {
+    this.onSelect = () => {
+      this._mesh.material.emissive.setRGB(1, 1, 1);
+    }
+    this.onDeselect = () => {
+      this._mesh.material.emissive.setRGB(0, 0, 0);
+    }
+    this.onHidden = () => {
+      anime({
+        targets: this._mesh.material,
+        opacity: this._hiddenOpacity,
+        duration: 300,
+        easing: 'easeOutSine',
+      });
+    }
+    this.onShowed = () => {
+      anime({
+        targets: this._mesh.material,
+        opacity: this._enabledOpacity,
+        duration: 300,
+        easing: 'easeOutSine',
+      });
+    }
   }
 }
 

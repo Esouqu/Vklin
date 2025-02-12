@@ -3,7 +3,12 @@ import { json, type RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ fetch }) => {
   const url = SPECTATOR_DATA_URL;
-  const data = await fetch(url).then(res => res.json());
+  const response = await fetch(url);
 
+  if (response.status === 502) {
+    return new Response('Bad Gateway', { status: 502 });
+  }
+
+  const data = await response.json();
   return json(data);
 };

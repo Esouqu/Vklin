@@ -1,24 +1,27 @@
-<div class="circle-wrapper">
+<script lang="ts">
+	import { cn } from '$lib/utils';
+
+	interface Props {
+		class?: string;
+	}
+
+	const { class: className }: Props = $props();
+</script>
+
+<div class={cn('flex items-center justify-center w-full', className)}>
 	<div class="circle"></div>
 </div>
 
-<style lang="scss">
+<style>
 	.circle {
-		height: var(--spinner-size, 25px);
-		width: var(--spinner-size, 25px);
-		border-color: var(--primary) var(--primary) var(--primary) transparent;
-		border-width: var(--spinner-weight, 5px);
+		height: var(--spinner-size, 1.5rem);
+		width: var(--spinner-size, 1.5rem);
+		border-color: hsl(var(--accent)) hsl(var(--accent)) transparent transparent;
+		border-width: calc(var(--spinner-size) / 10);
 		border-style: solid;
 		border-image: initial;
 		border-radius: 50%;
-		animation: 1s linear 0s infinite normal none running rotate;
-
-		&-wrapper {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			width: 100%;
-		}
+		animation: 1s ease-in-out 0s infinite normal none running rotate;
 	}
 
 	@keyframes rotate {

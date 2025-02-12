@@ -1,15 +1,18 @@
-import invulnerability from '$lib/assets/images/invulnerability.jpg';
-import luckyCharm from '$lib/assets/images/luckyCharm.jpg';
-import armor from '$lib/assets/images/armor.jpg';
+import armorImage from '$lib/assets/svgs/abdominal-armor.svg';
+import luckyCharmImage from '$lib/assets/svgs/pendant-key.svg';
+import potionImage from '$lib/assets/svgs/health-potion.svg';
+import knockout from '$lib/assets/images/knockout.png';
 
 export function getEffectIcon(effectId: string) {
   switch (effectId) {
+    case 'knockout':
+      return knockout;
     case 'invulnerability':
-      return invulnerability;
+      return potionImage;
     case 'luckyCharm':
-      return luckyCharm;
+      return luckyCharmImage;
     case 'armor':
-      return armor;
+      return armorImage;
     default:
       return '';
   }

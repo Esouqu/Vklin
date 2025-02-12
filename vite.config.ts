@@ -10,11 +10,4 @@ export default defineConfig({
 			compiler: 'svelte',
 		}),
 	],
-	css: {
-		preprocessorOptions: {
-			scss: {
-				api: "modern",
-			}
-		}
-	}
 });

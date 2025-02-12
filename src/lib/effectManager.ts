@@ -1,5 +1,4 @@
-import EFFECTS from "./data/effectsData";
-import type { IEffect } from "./interfaces";
+import type { IEffect } from "$lib/interfaces";
 
 class EffectManager {
   private effects: Map<string, IEffect> = new Map();
@@ -16,6 +15,5 @@ class EffectManager {
 }
 
 const effectManager = new EffectManager();
-effectManager.addEffects(EFFECTS);
 
 export default effectManager;
