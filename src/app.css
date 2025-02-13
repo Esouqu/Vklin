@@ -63,7 +63,7 @@
     --foreground: 0 0% 98%;
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
-    --popover: 240 10% 3.9%;
+    --popover: 189 9% 16%;
     --popover-foreground: 0 0% 98%;
     --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;
@@ -73,8 +73,8 @@
     --primary-foreground: 240 5.9% 10%;
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 188 59% 69%;
+    --accent-foreground: 240 5.9% 10%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --ring: 240 4.9% 83.9%;
@@ -96,12 +96,11 @@ body {
   display: flex;
   height: 100vh;
   font-family: 'Inter';
-  background-color: var(--surface-container);
+  background: hsl(var(--background) / var(--tw-bg-opacity, 1));
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  transition: background-color .3s;
-  user-select: none;
+  transition: background .3s;
   overflow: hidden;
 
   &.grabbing {
@@ -109,25 +108,6 @@ body {
     cursor: grabbing;
     pointer-events: none;
   }
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background-image: radial-gradient(circle at 0.125rem 0.125rem, rgb(255 255 255 / .15) 0.0875rem, transparent 0);
-    background-size: 2rem 2rem;
-    background-repeat: repeat;
-    background-position: .5rem center;
-  }
-}
-
-hr {
-  border-color: var(--outline);
-  border-radius: 0.5rem;
-  height: unset;
 }
 
 .transition-container {

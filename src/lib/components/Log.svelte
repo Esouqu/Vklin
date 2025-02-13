@@ -2,7 +2,7 @@
 	import type { FirebaseLog } from '$lib/interfaces';
 	import itemManager from '$lib/ItemManager';
 	import gameController from '$lib/GameController.svelte';
-	import { getLocalTime } from '$lib/utils';
+	import { getLocalTime, getNoun } from '$lib/utils';
 	import Item from './Item.svelte';
 	import TrophyIcon from '~icons/mdi/trophy';
 	import RemoveIcon from '~icons/mdi/remove-circle';
@@ -10,6 +10,7 @@
 	import ArrowIcon from '~icons/mdi/arrowRight';
 	import TreasureIcon from '~icons/mdi/treasureChest';
 	import HookIcon from '~icons/mdi/hook';
+	import KeyIcon from '~icons/mdi/key';
 
 	interface Props {
 		log: FirebaseLog;
@@ -50,11 +51,30 @@
 
 	function getActionData() {
 		switch (log.type) {
-			case 'game':
+			case 'key': {
+				if (log.data.keyAction === 'gained') {
+					return {
+						title: `Получает ${getNoun(log.data.keyAmount, ['ключ', 'ключа', 'ключей'])}`,
+						Icon: KeyIcon
+					};
+				}
+				if (log.data.keyAction === 'lost') {
+					return {
+						title: `Теряет ${getNoun(log.data.keyAmount, ['ключ', 'ключа', 'ключей'])}`,
+						Icon: KeyIcon
+					};
+				}
+				return {
+					title: '',
+					Icon: null
+				};
+			}
+			case 'game': {
 				return {
 					title: log.data.name,
 					Icon: log.data.status === 'completed' ? CheckIcon : RemoveIcon
 				};
+			}
 			case 'item': {
 				if (log.data.itemAction === 'used') {
 					return {
@@ -100,6 +120,14 @@
 		<div>
 			<Icon width="1.25rem" height="1.25rem" color="var(--on-surface)" />
 		</div>
+
+		{#if log.type === 'key'}
+			<div class="z-10 flex gap-1">
+				<div class="z-10 leading-6 font-medium">
+					{log.data.keyAction === 'lost' ? '-' : '+'}{log.data.keyAmount}
+				</div>
+			</div>
+		{/if}
 
 		{#if log.type === 'item' && itemAction}
 			<div class="flex items-center gap-2">

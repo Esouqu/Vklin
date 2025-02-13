@@ -12,6 +12,7 @@
 	import { Badge } from './ui/badge';
 	import Log from './Log.svelte';
 	import VkVideoIcon from './icons/VKVideoIcon.svelte';
+	import YoutubeIcon from './icons/YoutubeIcon.svelte';
 
 	interface Props {
 		player: GamePlayer;
@@ -81,8 +82,8 @@
 						<Button variant="link" class="p-1" href={player.streamUrl} target="_blank">
 							{#if player.streamUrl.includes('twitch.tv')}
 								<TwitchIcon />
-							{:else if player.streamUrl.includes('vkvideo.ru')}
-								<VkVideoIcon />
+							{:else if player.streamUrl.includes('youtube.com')}
+								<YoutubeIcon />
 							{/if}
 						</Button>
 					{/if}

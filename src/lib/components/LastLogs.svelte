@@ -29,7 +29,7 @@
 	</Button>
 	{#if $isOpen}
 		<div class="last-logs" transition:fly={{ x: 100, duration: 300 }}>
-			{#each lastLogs as log, idx (log.timestamp)}
+			{#each lastLogs as log, idx (idx)}
 				<div
 					class="last-logs-item"
 					style="opacity: {0.1 * (maxItems - idx + 1)};"
