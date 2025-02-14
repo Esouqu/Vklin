@@ -10,7 +10,7 @@
 	let { items }: Props = $props();
 
 	const maxRows = 2;
-	const maxCols = 9;
+	const maxCols = 8;
 	const mappedItems = $derived.by(getItems);
 
 	function getItems() {
@@ -33,7 +33,7 @@
 	}
 </script>
 
-<div class="grid grid-cols-[repeat(9,_3.5rem)] grid-rows-[repeat(2,_3.5rem)] justify-center gap-2">
+<div class="grid grid-cols-[repeat(8,_3.5rem)] grid-rows-[repeat(2,_3.5rem)] justify-center gap-2">
 	{#each mappedItems as { uses, item }}
 		{#if item}
 			<Item {...item} {uses} />

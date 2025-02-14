@@ -4,25 +4,19 @@ const EFFECTS: IEffect[] = [
   {
     id: 'knockout',
     name: 'Оглушение',
-    description: 'Игрок пропускает бросок кубика',
+    description: 'Игрок пропускает бросок кубика и не может использовать предмет',
     isNegative: true,
-  },
-  {
-    id: 'luckyCharm',
-    name: 'Амулет удачи',
-    description: 'Удваивает количество получеаемых ключей',
-    isNegative: false,
   },
   {
     id: 'armor',
     name: 'Броня',
-    description: 'Защищает от кражи ключей и атак',
+    description: 'Защищает от одной кражи ключей или атаки',
     isNegative: false,
   },
   {
     id: 'invulnerability',
     name: 'Полная защита',
-    description: 'Полная защита от всех атак и негативных эффектов',
+    description: 'Защищает от кражи ключей или атак',
     isNegative: false,
   }
 ];

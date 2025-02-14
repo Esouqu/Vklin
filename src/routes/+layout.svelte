@@ -6,7 +6,7 @@
 	const { children }: { children: Snippet } = $props();
 </script>
 
-<TooltipProvider disableHoverableContent>
+<TooltipProvider disableHoverableContent delayDuration={0}>
 	<div class="relative flex justify-center w-full items-center">
 		{@render children()}
 	</div>

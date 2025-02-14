@@ -46,7 +46,7 @@
 	.last-logs {
 		position: absolute;
 		top: calc(100% + 2rem);
-		right: 1rem;
+		right: 0;
 		z-index: 50;
 		display: flex;
 		flex-direction: column;
