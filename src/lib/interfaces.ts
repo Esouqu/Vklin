@@ -43,7 +43,7 @@ export interface FirebasePlayerStats {
 
 export interface IGame {
   name: string;
-  status: 'active' | 'completed' | 'dropped';
+  status: 'active' | 'completed' | 'dropped' | 'rerolled';
   review?: string;
   rating?: GameRating;
   ingameTime?: GameTimeRange;

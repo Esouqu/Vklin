@@ -29,6 +29,11 @@
 					text: 'Бросил',
 					bg: 'bg-red-600'
 				};
+			case 'rerolled':
+				return {
+					text: 'Реролл',
+					bg: 'bg-zinc-600'
+				};
 		}
 	}
 </script>
