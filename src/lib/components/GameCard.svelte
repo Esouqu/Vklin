@@ -21,12 +21,12 @@
 				};
 			case 'completed':
 				return {
-					text: 'Прошел',
+					text: 'Пройдено',
 					bg: 'bg-green-600'
 				};
 			case 'dropped':
 				return {
-					text: 'Бросил',
+					text: 'Дроп',
 					bg: 'bg-red-600'
 				};
 			case 'rerolled':
