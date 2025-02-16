@@ -49,5 +49,7 @@
 	<p class="leading-4 whitespace-break-spaces">
 		{rating === 'none' || rating === undefined ? '?' : rating} / 10 — {review}
 	</p>
-	<div class="text-xs text-muted-foreground">{localDate}</div>
+	{#if localDate !== 'Invalid Date'}
+		<div class="text-xs text-muted-foreground">{localDate}</div>
+	{/if}
 </div>

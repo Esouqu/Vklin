@@ -52,7 +52,6 @@
 
 		return {
 			playerId: player.id,
-			timestamp: Date.now(),
 			type: 'game',
 			data: player.game
 		} as FirebaseLog;
