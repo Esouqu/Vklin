@@ -35,8 +35,8 @@
 		await load3DModels();
 		await fetchGameData();
 
-		createLocations(locations);
 		createPlayers(players);
+		createLocations(locations);
 		effectManager.addEffects(EFFECTS);
 		itemManager.addItems(ITEMS);
 
