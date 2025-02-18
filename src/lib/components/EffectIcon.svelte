@@ -27,7 +27,7 @@
 		>
 			<div>{effect.description}</div>
 			<br />
-			<div class="text-xs">Длительность: {duration}</div>
+			<div class="text-xs">Длительность: {duration === -1 ? 'бесконечно' : duration}</div>
 		</TooltipContent>
 	</Tooltip>
 {/if}

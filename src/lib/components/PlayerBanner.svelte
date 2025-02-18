@@ -110,7 +110,7 @@
 	{#if effects || isStunned}
 		<div class="player-effects">
 			{#each Object.entries(effects || {}) as [effectId, d]}
-				{@const duration = d?.duration || 0}
+				{@const duration = d?.duration || -1}
 				<EffectIcon {effectId} {duration} />
 			{/each}
 			{#if isStunned}
