@@ -10,13 +10,13 @@ const EFFECTS: IEffect[] = [
   {
     id: 'armor',
     name: 'Броня',
-    description: 'Защищает от одной кражи ключей или атаки',
+    description: 'Защищает от одной потери ключей (кроме потери ключей за дроп)',
     isNegative: false,
   },
   {
     id: 'invulnerability',
-    name: 'Полная защита',
-    description: 'Защищает от кражи ключей или атак',
+    name: 'Неуязвимость',
+    description: 'Защищает от потери ключей (кроме потери ключей за дроп) и оглушения на 1 ход',
     isNegative: false,
   }
 ];
