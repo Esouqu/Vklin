@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import LastLogs from '../lib/components/LastLogs.svelte';
 	import PlayersBanners from '../lib/components/PlayersBanners.svelte';
-	import type { LocationsCollection, LogsCollection, PlayersCollection } from '../lib/interfaces';
+	import type { LocationsCollection, PlayersCollection } from '../lib/interfaces';
 	import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 	import { ARROW_OBJECT, loadGLB, POINTS_OBJECT } from '$lib/utils';
 	import arrowGLB from '$lib/assets/3d-models/arrow/direction_arrow.glb';
@@ -64,7 +64,7 @@
 	}
 
 	async function fetchGameData() {
-		const res = await fetch('/api/game-data');
+		const res = await fetch('https://server.vklin.com/');
 		const data = await res.json();
 
 		players = data.players;
