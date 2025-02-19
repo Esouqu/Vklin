@@ -11,6 +11,7 @@
 	import TreasureIcon from '~icons/mdi/treasureChest';
 	import HookIcon from '~icons/mdi/hook';
 	import KeyIcon from '~icons/mdi/key';
+	import RefreshIcon from '~icons/mdi/refresh';
 
 	interface Props {
 		log: FirebaseLog;
@@ -72,7 +73,12 @@
 			case 'game': {
 				return {
 					title: log.data.name,
-					Icon: log.data.status === 'completed' ? CheckIcon : RemoveIcon
+					Icon:
+						log.data.status === 'completed'
+							? CheckIcon
+							: log.data.status === 'rerolled'
+								? RefreshIcon
+								: RemoveIcon
 				};
 			}
 			case 'item': {
