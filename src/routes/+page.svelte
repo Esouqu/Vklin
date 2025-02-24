@@ -21,6 +21,7 @@
 	import effectManager from '$lib/effectManager';
 	import EFFECTS from '$lib/data/effectsData';
 	import ITEMS from '$lib/data/itemsData';
+	import Timer from '$lib/components/Timer.svelte';
 
 	let isLoading = $state(true);
 	let players: PlayersCollection = $state({});
@@ -109,6 +110,7 @@
 			<Spinner --spinner-size="3rem" />
 		</div>
 	{:else}
+		<Timer />
 		<SpectatorCanvas
 			locationsGroup={gameController.locationsGroup}
 			playersGroup={gameController.playersGroup}
