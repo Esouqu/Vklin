@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Card } from './ui/card';
 	import { getNoun } from '$lib/utils';
 	import { DateTime } from 'luxon';
 
@@ -37,15 +36,19 @@
 	});
 </script>
 
-<div class="absolute top-4 left-1/2 translate-x-[-50%]">
-	<Card class="flex p-2">
-		<div>
+<div
+	class="absolute top-4 left-1/2 translate-x-[-50%] bg-[var(--surface-container)] rounded-full py-1 px-4 w-fit font-medium"
+>
+	<div>
+		{#if timeRemaining.total < 0}
+			Ивент окончен
+		{:else}
 			Ивент закончится через <b
 				>{timeRemaining.days}
 				{timeRemaining.hours}
 				{timeRemaining.minutes}
 			</b>
 			по мск
-		</div>
-	</Card>
+		{/if}
+	</div>
 </div>
