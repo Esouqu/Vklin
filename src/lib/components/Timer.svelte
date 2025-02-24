@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { getNoun } from '$lib/utils';
 	import { DateTime } from 'luxon';
 
 	const targetDate = DateTime.fromISO('2025-02-28T18:00:00', { zone: 'Europe/Moscow' });
-	let timeRemaining = calculateTimeRemaining(targetDate);
+	let timeRemaining = $state(calculateTimeRemaining(targetDate));
 
 	function calculateTimeRemaining(endDate: DateTime<true> | DateTime<false>) {
 		const total = Date.parse(endDate.toString()) - Date.parse(new Date().toString());
@@ -15,10 +14,9 @@
 
 		return {
 			total,
-			days: getNoun(days, ['день', 'дня', 'дней']),
-			hours: getNoun(hours, ['час', 'часа', 'часов']),
-			minutes: getNoun(minutes, ['минуту', 'минуты', 'минут']),
-			seconds: getNoun(seconds, ['секунду', 'секунды', 'секунд'])
+			hours: hours + Math.floor(days * 24),
+			minutes: minutes,
+			seconds: seconds
 		};
 	}
 
@@ -36,19 +34,26 @@
 	});
 </script>
 
-<div
-	class="absolute top-4 left-1/2 translate-x-[-50%] bg-[var(--surface-container)] rounded-full py-1 px-4 w-fit font-medium"
->
-	<div>
-		{#if timeRemaining.total < 0}
-			Ивент окончен
+<div class="grid absolute grid-cols-[14rem] top-2 left-1/2 translate-x-[-50%] w-fit font-medium">
+	<div class="col-start-1 row-start-1">
+		<img
+			src="https://enter-media.org/upload/iblock/147/147432ef60155b033bd722770a4a854d.png"
+			alt="timer bg"
+		/>
+	</div>
+	<div class="col-start-1 row-start-1 flex flex-col items-center justify-center">
+		{#if timeRemaining.total <= 0}
+			<p class="text-lg uppercase text-red-500">Ивент окончен</p>
 		{:else}
-			Ивент закончится через <b
-				>{timeRemaining.days}
-				{timeRemaining.hours}
-				{timeRemaining.minutes}
+			<b class="text-red-500 text-5xl font-[DIGI]">
+				{`${timeRemaining.hours.toString().padStart(2, '0')}:${timeRemaining.minutes.toString().padStart(2, '0')}:${timeRemaining.seconds.toString().padStart(2, '0')}`}
 			</b>
-			по мск
 		{/if}
+	</div>
+	<div class="col-start-1 row-start-1">
+		<img
+			src="https://enter-media.org/upload/iblock/d66/d663c91251e0f1e88dfbc94f1a1205f4.png"
+			alt="timer foreground"
+		/>
 	</div>
 </div>

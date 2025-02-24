@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'DIGI';
+  font-style: normal;
+  font-weight: 700;
+  src: url('./lib/assets/fonts/DS-DIGIB.woff2') format('woff2');
+}
+
 @layer base {
   :root {
     --primary: rgb(130 211 224);
