@@ -18,8 +18,8 @@
 			total,
 			days: getNoun(days, ['день', 'дня', 'дней']),
 			hours: getNoun(hours, ['час', 'часа', 'часов']),
-			minutes: getNoun(minutes, ['минута', 'минуту', 'минут']),
-			seconds: getNoun(seconds, ['секунда', 'секунды', 'секунд'])
+			minutes: getNoun(minutes, ['минуту', 'минуты', 'минут']),
+			seconds: getNoun(seconds, ['секунду', 'секунды', 'секунд'])
 		};
 	}
 
